@@ -93,7 +93,6 @@ local function get_formspec(pos,player)
 			 end, formspec)
 end
 realestate.transfer = function (transfer)
-   minetest.chat_send_all("FOOOO")
    areas.areas[transfer.id].owner = transfer.from
    minetest.set_node(transfer.pos,{name="air"})
 end
