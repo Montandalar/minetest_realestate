@@ -138,24 +138,6 @@ minetest.register_on_player_receive_fields(function(player, form, pressed)
       end
 end)
 
-minetest.register_node("realestate:sale", {
-			  description = "For Sale marker",
-			  tiles = {
-			     "feedlot_milker_top.png",
-			     "feedlot_milker_top.png",
-			     "feedlot_milker_side.png",
-			     "feedlot_milker_side.png",
-			     "feedlot_milker_side.png",
-			     "feedlot_milker_side.png",
-			  },
-			  paramtype = "light",
---			  on_construct = on_construct,
-			  --			  can_dig = can_dig,
-			  after_place_node=after_place_node,
-			  groups = {snappy = 3}, 
-			  tube = tube
-})
-
 minetest.register_node("realestate:sign", {
 	tiles = {
 		"default_wood.png",
@@ -167,6 +149,7 @@ minetest.register_node("realestate:sign", {
 	},
 	drawtype = "nodebox",
 	paramtype = "light",
+	description = "For sale sign",
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -184,3 +167,11 @@ minetest.register_node("realestate:sign", {
 	end,
 })
 
+minetest.register_craft({
+	output = "realestate:sign",
+	recipe = {
+		{"default:stick", "default:stick", "default:stick"},
+		{"default:stick", "", "default:sign_wall_wood"},
+		{"default:stick", "", ""}
+	}
+})
