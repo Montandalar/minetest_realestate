@@ -2,6 +2,12 @@
 -- Sell your areas!
 
 realestate = {}
+realestate.area = function (area_id)
+   area = areas.areas[area_id]
+   local size = (math.abs( area.pos1.x - area.pos2.x )+1)
+       * (math.abs( area.pos1.z - area.pos2.z )+1);
+   return size
+end
 
 local function after_place_node(pos, player)
    local meta = minetest.get_meta(pos)
@@ -28,6 +34,7 @@ local function get_formspec(pos,player)
 	 "label[0.5,1.5;Area Number: XYZ]" ..
 	 "label[0.5,2;Area Name: XYZ]" ..
 	 "label[0.5,2.5;Area Price: $XYZ]" ..
+	 "label[0.5,2.5;Surface area: $XYZ]" ..
       "button_exit[0.2,5;1,1;Quit;Quit]" ..
       "button[4.7,5;3,1;buy;Buy]"
    if player:get_player_name() == owner then
@@ -72,6 +79,7 @@ local function get_formspec(pos,player)
 	 "label[0.5,1.5;Area Number: "..id.."]" ..
 	 "label[0.5,2;Area Name: "..areas.areas[id].name.."]" ..
 	 "label[0.5,2.5;Area Price: "..price.."]" ..
+	 "label[0.5,3;Surface Area: "..realestate.area(id).." m²]" ..
       "button_exit[0.2,5;1,1;Quit;Quit]" ..
 	 "button[4.7,5;3,1;buy;Buy]"   
    minetest.after((0.1), function(gui)
