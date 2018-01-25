@@ -1,6 +1,23 @@
 -- Real Estate mod for minetest
 -- Sell your areas!
 
+-- Copyright (c) 2018 Gabriel Pérez-Cerezo <gabriel@gpcf.eu>
+
+-- This program is free software: you can redistribute it and/or
+-- modify it under the terms of the GNU General Public License as
+-- published by the Free Software Foundation, either version 3 of the
+-- License, or (at your option) any later version.
+
+-- This program is distributed in the hope that it will be useful, but
+-- WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-- General Public License for more details.
+
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see
+-- <http://www.gnu.org/licenses/>.
+
+
 realestate = {}
 realestate.area = function (area_id)
    area = areas.areas[area_id]
@@ -23,20 +40,9 @@ local function get_formspec(pos,player)
    local name = player:get_player_name()
    local id = meta:get_int("id")
    local price = meta:get_int("price")
+   atm.ensure_init(name) -- ensure the player already has an atm account
    playerpos[name] = pos
-   local formspec =
-      "size[8,6]"..
-      default.gui_bg..
-      default.gui_bg_img..
-      default.gui_slots..
-      "label[2.5,0;Real estate for sale]" ..
-	 "label[0.5,0.5;Your account balance: $".. atm.balance[player:get_player_name()].. "]" ..
-	 "label[0.5,1.5;Area Number: XYZ]" ..
-	 "label[0.5,2;Area Name: XYZ]" ..
-	 "label[0.5,2.5;Area Price: $XYZ]" ..
-	 "label[0.5,2.5;Surface area: $XYZ]" ..
-      "button_exit[0.2,5;1,1;Quit;Quit]" ..
-      "button[4.7,5;3,1;buy;Buy]"
+   local formspec = ""
    if player:get_player_name() == owner then
       if not id then
 	 id = ""
@@ -61,7 +67,7 @@ local function get_formspec(pos,player)
       return
    end
 
-   if not id and not price then
+   if not id or not price then
       minetest.chat_send_player(name, "This sale point is unconfigured")
       return
    end
@@ -103,6 +109,7 @@ minetest.register_on_player_receive_fields(function(player, form, pressed)
 	 local meta = minetest.get_meta(playerpos[name])
 	 local id = meta:get_int("id")
 	 local price = meta:get_int("price")
+
 	 local owner = meta:get_string("owner")
 	 atm.pending_transfers[name] = {from=name, to = owner, sum = price, desc = "Payment for area "..id, callback=realestate.transfer, extern=true, id=id, pos=playerpos[name]}
 	 atm.showform_wtconf (player, owner, price, "Payment for area "..id)
