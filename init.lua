@@ -83,7 +83,7 @@ local function get_formspec(pos,player)
       "label[2.5,0;Real estate for sale]" ..
 	 "label[0.5,0.5;Your account balance: $".. atm.balance[player:get_player_name()].. "]" ..
 	 "label[0.5,1.5;Area Number: "..id.."]" ..
-	 "label[0.5,2;Area Name: "..areas.areas[id].name.."]" ..
+	 "label[0.5,2;Area Name: "..minetest.formspec_escape(areas.areas[id].name).."]" ..
 	 "label[0.5,2.5;Area Price: "..price.."]" ..
 	 "label[0.5,3;Surface Area: "..realestate.area(id).." m²]" ..
       "button_exit[0.2,5;1,1;Quit;Quit]" ..
@@ -93,8 +93,10 @@ local function get_formspec(pos,player)
 			 end, formspec)
 end
 realestate.transfer = function (transfer)
+   -- callback called from atm mod after transfer arrives. 
    areas.areas[transfer.id].owner = transfer.from
    minetest.set_node(transfer.pos,{name="air"})
+   minetest.chat_send_player(transfer.from,"The area has been transfered to you")
 end
 minetest.register_on_player_receive_fields(function(player, form, pressed)
       if form == "realestate.sell" then
@@ -167,6 +169,7 @@ minetest.register_node("realestate:sign", {
 		}
 	},
 	after_place_node=after_place_node,
+	paramtype2="facedir",
 	groups = {snappy = 3},
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 	   get_formspec(pos,player)
